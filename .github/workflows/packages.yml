@@ -181,6 +181,10 @@ jobs:
           install: >-
             make mingw-w64-x86_64-gcc mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-nasm
             mingw-w64-x86_64-pkgconf mingw-w64-x86_64-zlib
+      - name: curl retries (ffmpeg.org is flaky from runners)
+        if: steps.ffmpeg.outputs.cache-hit != 'true'
+        shell: msys2 {0}
+        run: printf 'retry = 8\nretry-all-errors\nretry-delay = 30\nconnect-timeout = 60\n' > ~/.curlrc
       - name: ffmpeg
         # The small LGPL ffmpeg the installer carries (as the Linux packages do): only what DigUp reads, so its licenses
         # are FFmpeg's, dav1d's and zlib's. Built with MSYS2's MinGW compilers, before the MSVC environment.
